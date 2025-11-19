@@ -22,10 +22,12 @@ Get the color palette, compute the skeletons and measures the distances
 colors = get_color_palette()
 
 segmentations_path = '/Users/joel/PycharmProjects/lustre/actinergy/segmentations'
+skeletons_path = segmentations_path.replace('segmentations',
+                                                              'skeletons')
 distances_path = segmentations_path.replace('segmentations',
                                                               'distances')
 skeletonize_dataset(segmentations_path=segmentations_path)
-compute_distances_dataset(path=distances_path)
+compute_distances_dataset(path=skeletons_path)
 
 """
 Load the distances from the whole dataset.

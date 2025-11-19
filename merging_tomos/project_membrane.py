@@ -1,3 +1,4 @@
+import mrcfile
 import numpy as np
 import zarr
 import matplotlib.pyplot as plt
@@ -92,27 +93,35 @@ gm_region = GaussianMixture(n_components=3, covariance_type='full',
 
 for name in membranes.keys():
     print(name)
+    tomo = mrcfile.open(path.replace('distances','tomos')+f'/{name.replace("_pm.pt","_Vol_px10.mrc")}')
+    tomo = np.array(tomo.data,dtype=np.float64)
+
     pred = gm.predict(membranes[name]['distance'].unsqueeze(-1))
     pred_regions = gm_region.predict(membranes[name]['distance'].unsqueeze(-1))
 
     pca = PCA(n_components=2)
     membrane_pca = pca.fit_transform(membranes[name]['position'])
-
-    fig = plt.figure()
+    proportion = np.array(tomo.shape)[np.argmax(np.abs(pca.components_), axis=1)]
+    fig = plt.figure(figsize=(3,3*proportion[1]/proportion[0]))
     for _ in reversed(range(5)):
         plt.scatter(membrane_pca[pred == np.argsort(gm.means_.flatten())[_], 0],
                     membrane_pca[pred == np.argsort(gm.means_.flatten())[_], 1],
                     c=colors['regions'][_],s=2)
+
+    ax = fig.gca()
+    #ax.set_aspect(proportion[1]/proportion[0])
+
     plt.axis('off')
-    fig.savefig(path.replace('distances', 'figures') + f'/projected_membranes/{name.replace(".pt", ".png")}')
+    fig.savefig(path.replace('distances', 'figures') + f'/projected_membranes/{name.replace(".pt", ".png")}',
+                bbox_inches='tight', pad_inches=0.2)
     plt.close(fig)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6,6*proportion[1]/proportion[0]))
     for _ in range(5):
         if not ((_==1) or (_==2)):
             plt.scatter(membrane_pca[pred==np.argsort(gm.means_.flatten())[_], 0],
                     membrane_pca[pred==np.argsort(gm.means_.flatten())[_], 1],
-                    c=colors['regions'][_],s=2)
+                    c=colors['regions'][_],marker=',')
         else:
             for r in range(3):
                 condition = np.logical_or(pred==np.argsort(gm.means_.flatten())[1],
@@ -121,10 +130,18 @@ for name in membranes.keys():
                                            pred_regions==r)
                 plt.scatter(membrane_pca[condition,0],
                             membrane_pca[condition,1],
-                            c=colors['shades_peaks'][r],s=2)
+                            c=colors['shades_peaks'][r],marker=',')
     plt.axis('off')
-    fig.savefig(path.replace('distances','figures')+f'/projected_membranes/{name.replace(".pt","_regions.png")}')
+
+    ax = fig.gca()
+    #ax.set_aspect(proportion[1] / proportion[0])
+
+
+    fig.savefig(path.replace('distances','figures')+f'/projected_membranes/{name.replace(".pt","_regions.png")}',
+                bbox_inches='tight', pad_inches=0.2)
     plt.close(fig)
+
+
 
 
 
