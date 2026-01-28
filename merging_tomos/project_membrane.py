@@ -109,7 +109,6 @@ for name in membranes.keys():
                     c=colors['regions'][_],s=2)
 
     ax = fig.gca()
-    #ax.set_aspect(proportion[1]/proportion[0])
 
     plt.axis('off')
     fig.savefig(path.replace('distances', 'figures') + f'/projected_membranes/{name.replace(".pt", ".png")}',

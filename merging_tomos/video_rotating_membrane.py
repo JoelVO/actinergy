@@ -35,6 +35,7 @@ def rotate_z(points, theta):
 mask_path = '/Users/joel/PycharmProjects/lustre/actinergy/masks'
 
 for mask_name in os.listdir(mask_path):
+    print(mask_name)
     # mask = torch.load('/Users/joel/PycharmProjects/lustre/actinergy/masks/Position_28_2_Vol_px10.pt')
     mask = torch.load(os.path.join(mask_path, mask_name))
     cloud_point = torch.stack(torch.where(mask.amin(dim=-1) < 255))
@@ -55,8 +56,8 @@ for mask_name in os.listdir(mask_path):
 
     for angle in tqdm(range(0, 360, 2)):  # 2° step = 180 frames
         ax.cla()  # Clear axis
-        ax.scatter(z,y,x, s=2, c=colors, marker=',')
 
+        ax.scatter(z,y,x, s=1, c=colors, marker='.')
         ax.view_init(elev=0,azim=angle)  # Rotate camera
 
         plt.tight_layout()
@@ -73,6 +74,6 @@ for mask_name in os.listdir(mask_path):
     # ---------------------------------------------------
     imageio.mimsave(os.path.join(mask_path.replace('masks',
                                                    'gifs/rotating_membrane'),mask_name.replace('.pt','.gif')),
-                    frames, fps=20)
+                    frames, fps=1)
 
-    break
+ 
