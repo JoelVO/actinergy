@@ -102,7 +102,7 @@ def compute_filaments_angles(tomo_path,cloud_radius,min_volume):
 #
 # path = str(Path(tomo_path).parent.parent)
 # tomo_name = tomo_path.split('/')[-1].split('_Vol')[0]
-# filaments_angles = compute_filaments_angles(tomo_name,cloud_radius)
+# filaments_angles = compute_filaments_angles(tomo_name,cloud_radius,min_volume=min_volume)
 #
 # colors = get_color_palette()
 # means_path = os.path.join(path,'params','gmm_means.npy')
